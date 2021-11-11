@@ -1,0 +1,32 @@
+{
+  "name": "msbootcampjs",
+  "version": "1.0.0",
+  "description": "\"\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx-jasmine",
+    "transpile": "npx babel ./ --out-dir dist --source-maps inline --ignore \"dist/*\",\"lib/*\",\"spec/*\",\"node_modules/*\",\"bundle.js\",\"index.js\"",
+    "start": "npm run transpile && node index.js",
+    "build": "npm run transpile && browserify index.js --debug --standalone myModule > bundle.js"
+  },
+  "author": "Adam",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "jasmine": "^3.10.0",
+    "regenerator-runtime": "^0.13.9"
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.16.0",
+    "@babel/core": "^7.16.0",
+    "@babel/plugin-proposal-class-properties": "^7.16.0",
+    "@babel/preset-env": "^7.16.0",
+    "babel-preset-stage-0": "^6.24.1",
+    "babelify": "^10.0.0",
+    "browserify": "^17.0.0"
+    
+  }
+}
