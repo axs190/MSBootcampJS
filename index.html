@@ -13,24 +13,24 @@
         </div>
         <form onsubmit="return fetchBook()">
             <div>
-                <input id="searchText" name="query" placeholder="Search" />
-                <button id="searchButton" type="submit">Search</button>
+                <input id="searchText" name="query" value="Search" />
+                <button id="searchButton">Search</button>
             </div>
         </form>
         <div id="navigation">
             <button id="previous" onclick="previousBook()"> Previous </button>
             <button id="next" onclick="nextBook()"> Next </button>
-            <span>Page: <select id="pageNumber"></select></span>
+            <span>Page: <select id="pageNumber" onchange="pageBook()"></select></span>
         </div>
         <div id="searchResults" style="margin-top: 20px;">
-            <img id="myThumbNail" src="" width="150px" style="float: left; margin-right: 10px;"></img>
-            <strong><span id="title" >Title</span></strong>
+            <img id="myThumbNail" src="book.thumbnail" width="150px" style="float: left; margin-right: 10px;"></img>
+            <strong><span id="title" value="">Title</span></strong>
             <br>
-            <span id="authors">Author</span>
+            <span id="authors" value="">Author</span>
             <br>
-            <i><span id="year">year</span></i>
+            <i><span id="year" value="">year</span></i>
             <br>
-            <span id="description">
+            <span id="description" value="">
                 description
             </span>
         </div>
@@ -40,16 +40,61 @@
         
         const bookService = new myModule.googleBookSvc.GoogleBookService();
         let book = new myModule.GoogleBook();
+        let page=0;
+
+        function changeTheBook(x,service)
+        {
+            book.googleBookItemMapper(service.fetchedResults.items[x]);
+            document.getElementById("title").innerText=book.title;
+            document.getElementById("authors").innerText=book.author;
+            document.getElementById("year").innerText=book.publishedDate;
+            document.getElementById("description").innerText=book.description;
+            document.getElementById("myThumbNail").src=book.thumbnail;
+
+            let pagenum=document.getElementById("pageNumber")
+            pagenum.selectedIndex=page;
+        }
         function previousBook()
         {
-         
+            page-=1;
+
+            if (page<0)
+            {
+                page=0;
+            }
+            changeTheBook(page,bookService)
         }
         function nextBook()
         {
-         
+            page+=1;
+            if (page>9)
+            {
+                page=0;
+            }
+            changeTheBook(page,bookService)
+        }
+        function searchBook(){
+            let search = document.getElementById("searchText").value;
+
+            let title = book.title;
+            for (let i=0; i<10; i++) {
+                  book.googleBookItemMapper(bookService.fetchedResults.items[i]);
+                  if (search===book.title) {
+                   changeTheBook(i, bookService)
+                }
+            }
+
         }
 
-        bookService.fetchBooks('Cats').then( (done) => {
+        function pageBook(){
+            let pagenum=document.getElementById("pageNumber")
+            page=pagenum.selectedIndex;
+            changeTheBook(page,bookService)
+        }
+        //gets the search
+        let url = new URL(window.location.href);
+
+        bookService.fetchBooks(url.searchParams.get('query')).then( (done) => {
         book.googleBookItemMapper( bookService.fetchedResults.items[0])
         var pgNbrSelect = document.getElementById("pageNumber");
         const max = bookService.fetchedResults.items.length - 1;
@@ -58,9 +103,16 @@
         opt.value = i;
         opt.innerHTML = i;
         pgNbrSelect.appendChild(opt);
+        debugger
         }
         changeTheBook(0, bookService);
         })
+        function pageNumberSelect()
+        {
+
+            var img = document.getElementById("pageNumber");
+
+        }
      
     </script>
 </body>
